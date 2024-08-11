@@ -41,6 +41,8 @@ class User(SQLAlchemyBaseUserTable[int], Base):
     is_superuser: bool = Column(Boolean, default=False, nullable=False)
     is_verified: bool = Column(Boolean, default=False, nullable=False)
 
+    sold_products: Mapped[List["Product"]] = relationship(back_populates="seller")
+
     def to_short_read_model(self) -> UserNameSchema:
         return UserNameSchema(
             id=self.id,

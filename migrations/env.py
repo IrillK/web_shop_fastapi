@@ -35,6 +35,7 @@ if config.config_file_name is not None:
 # target_metadata = [metadata, Base.metadata]
 from src.database import metadata, Base
 from src.auth.models import metadata, Base
+from src.models.product import Base
 target_metadata = [metadata, Base.metadata]
 
 # other values from the config, defined by the needs of env.py,
