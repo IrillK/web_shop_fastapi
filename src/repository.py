@@ -43,3 +43,27 @@ class SQLAlchemyRepository(AbstractRepository):
 
     def __init__(self, session: AsyncSession):
         self.session = session
+    
+    async def find_one(self, **filter_by):
+        stmt = select(self.model).filter_by(**filter_by)
+        res = await self.session.execute(stmt)
+        res = res.scalar_one_or_none()
+        if res is None:
+            return None
+        return res
+
+    async def find_filter(self, **filter_by):
+        stmt = select(self.model).filter_by(**filter_by)
+        res = await self.session.execute(stmt)
+        return res.all()
+
+    async def find_all(self):
+        stmt = select(self.model)
+        res = await self.session.execute(stmt)
+        return res.all()
+
+    async def count_all(self):
+        stmt = select(func.count(self.model.id))
+        res = await self.session.execute(stmt)
+        res = res.scalar()
+        return res
