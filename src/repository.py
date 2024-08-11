@@ -9,17 +9,17 @@ class AbstractRepository(ABC):
     async def add_one():
         raise NotImplementedError
     
-    @abstractmethod
-    async def add_and_return_one():
-        raise NotImplementedError
+    # @abstractmethod
+    # async def add_and_return_one():
+    #     raise NotImplementedError
     
-    @abstractmethod
-    async def edit_one():
-        raise NotImplementedError
+    # @abstractmethod
+    # async def edit_one():
+    #     raise NotImplementedError
     
-    @abstractmethod
-    async def delete_one():
-        raise NotImplementedError
+    # @abstractmethod
+    # async def delete_one():
+    #     raise NotImplementedError
     
     @abstractmethod
     async def find_one():
@@ -57,13 +57,19 @@ class SQLAlchemyRepository(AbstractRepository):
         res = await self.session.execute(stmt)
         return res.all()
 
-    async def find_all(self):
-        stmt = select(self.model)
-        res = await self.session.execute(stmt)
+    async def find_all(self, limit: int=10, offset: int =0):
+        stmt = select(self.model)\
+            .limit(limit).offset(offset)
+        res = await self.session.scalars(stmt)
         return res.all()
-
+        
     async def count_all(self):
         stmt = select(func.count(self.model.id))
         res = await self.session.execute(stmt)
         res = res.scalar()
         return res
+
+    async def add_one(self, data: dict) -> int:
+        stmt = insert(self.model).values(**data).returning(self.model.id)
+        res = await self.session.execute(stmt)
+        return res.scalar_one()

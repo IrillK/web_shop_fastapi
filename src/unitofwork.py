@@ -4,11 +4,13 @@ from typing import Type
 from database import async_session_maker
 
 from repositories.user import UserRepository
+from repositories.product import ProductRepository
 
 
 # https://github1s.com/cosmicpython/code/tree/chapter_06_uow
 class IUnitOfWork(ABC):
     users: Type[UserRepository]
+    products: Type[ProductRepository]
 
     @abstractmethod
     def __init__(self): ...
@@ -34,6 +36,7 @@ class UnitOfWork:
         self.session = self.session_factory()
 
         self.users = UserRepository(self.session)
+        self.products = ProductRepository(self.session)
 
     async def __aexit__(self, *args):
         await self.rollback()
