@@ -5,12 +5,14 @@ from database import async_session_maker
 
 from repositories.user import UserRepository
 from repositories.product import ProductRepository
+from repositories.role import RoleRepository
 
 
 # https://github1s.com/cosmicpython/code/tree/chapter_06_uow
 class IUnitOfWork(ABC):
     users: Type[UserRepository]
     products: Type[ProductRepository]
+    role: Type[RoleRepository]
 
     @abstractmethod
     def __init__(self): ...
@@ -37,6 +39,7 @@ class UnitOfWork:
 
         self.users = UserRepository(self.session)
         self.products = ProductRepository(self.session)
+        self.role = RoleRepository(self.session)
 
     async def __aexit__(self, *args):
         await self.rollback()

@@ -16,6 +16,8 @@ from sqlalchemy import (
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from database import Base, metadata
+from models.order import Order
+from models.product import Product
 
 from auth.schemas import UserNameSchema
 
@@ -42,6 +44,7 @@ class User(SQLAlchemyBaseUserTable[int], Base):
     is_verified: bool = Column(Boolean, default=False, nullable=False)
 
     sold_products: Mapped[List["Product"]] = relationship(back_populates="seller")
+    orders: Mapped[List["Order"]] = relationship(back_populates="customer")
 
     def to_short_read_model(self) -> UserNameSchema:
         return UserNameSchema(

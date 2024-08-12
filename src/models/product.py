@@ -16,3 +16,5 @@ class Product(Base):
 
     seller_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
     seller: Mapped["User"] = relationship(back_populates="sold_products")
+
+    orders: Mapped[List["OrderProduct"]] = relationship(back_populates="product")

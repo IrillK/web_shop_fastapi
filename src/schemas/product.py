@@ -3,6 +3,8 @@ from typing import List, Optional
 
 from pydantic import BaseModel
 
+from schemas.user import UserSchemaName
+
 
 class ProductSchemaAdd(BaseModel):
     name: str
@@ -13,6 +15,13 @@ class ProductSchemaAdd(BaseModel):
 class ProductSchemaOut(ProductSchemaAdd):
     id: int
     seller_id: int
+
+    class Config:
+        from_attributes = True
+
+class ProductSchemaSellerOut(ProductSchemaAdd):
+    id: int
+    seller: UserSchemaName
 
     class Config:
         from_attributes = True
