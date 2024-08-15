@@ -13,3 +13,6 @@ app.include_router(auth_router)
 
 from api.product import router as product_router
 app.include_router(product_router)
+
+from api.order import router as order_router
+app.include_router(order_router)

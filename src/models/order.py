@@ -8,7 +8,17 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
+from enum import Enum
+from sqlalchemy import Enum as SQLAlchemyEnum # Не заюываем, что дублируем в миграцию
+
 from models.product import Product
+
+class StatusEnum(Enum):
+    EXECUTED = 'executed'
+    PROCESSED = 'processed'
+    ERROR = 'error'
+
+SQLAlchemyStateEnum = SQLAlchemyEnum(StatusEnum, name='status_enum', create_type=False)
 
 
 class Order(Base):
@@ -16,6 +26,7 @@ class Order(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     created_at: Mapped[datetime] = mapped_column(TIMESTAMP, default=datetime.utcnow)
+    status: Mapped[str] = mapped_column(SQLAlchemyStateEnum, nullable=False) # test
 
     customer_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
     customer: Mapped["User"] = relationship(back_populates="orders")

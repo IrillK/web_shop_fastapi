@@ -6,12 +6,15 @@ from database import async_session_maker
 from repositories.user import UserRepository
 from repositories.product import ProductRepository
 from repositories.role import RoleRepository
+from repositories.order import OrderRepository, OrderProductRepository
 
 
 # https://github1s.com/cosmicpython/code/tree/chapter_06_uow
 class IUnitOfWork(ABC):
     users: Type[UserRepository]
     products: Type[ProductRepository]
+    orders: Type[OrderRepository]
+    orders_products: Type[OrderProductRepository]
     role: Type[RoleRepository]
 
     @abstractmethod
@@ -39,6 +42,8 @@ class UnitOfWork:
 
         self.users = UserRepository(self.session)
         self.products = ProductRepository(self.session)
+        self.orders = OrderRepository(self.session)
+        self.orders_products = OrderProductRepository(self.session)
         self.role = RoleRepository(self.session)
 
     async def __aexit__(self, *args):

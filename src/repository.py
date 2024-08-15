@@ -8,31 +8,31 @@ class AbstractRepository(ABC):
     @abstractmethod
     async def add_one():
         raise NotImplementedError
-    
+
     # @abstractmethod
     # async def add_and_return_one():
     #     raise NotImplementedError
-    
+
     # @abstractmethod
     # async def edit_one():
     #     raise NotImplementedError
-    
-    # @abstractmethod
-    # async def delete_one():
-    #     raise NotImplementedError
-    
+
+    @abstractmethod
+    async def delete_one():
+        raise NotImplementedError
+
     @abstractmethod
     async def find_one():
         raise NotImplementedError
-    
+
     @abstractmethod
     async def find_filter():
         raise NotImplementedError
-    
+
     @abstractmethod
     async def find_all():
         raise NotImplementedError
-    
+
     @abstractmethod
     async def count_all():
         raise NotImplementedError
@@ -43,7 +43,7 @@ class SQLAlchemyRepository(AbstractRepository):
 
     def __init__(self, session: AsyncSession):
         self.session = session
-    
+
     async def find_one(self, **filter_by):
         stmt = select(self.model).filter_by(**filter_by)
         res = await self.session.execute(stmt)
@@ -57,12 +57,11 @@ class SQLAlchemyRepository(AbstractRepository):
         res = await self.session.execute(stmt)
         return res.all()
 
-    async def find_all(self, limit: int=10, offset: int =0):
-        stmt = select(self.model)\
-            .limit(limit).offset(offset)
+    async def find_all(self, limit: int = 10, offset: int = 0):
+        stmt = select(self.model).limit(limit).offset(offset)
         res = await self.session.scalars(stmt)
         return res.all()
-        
+
     async def count_all(self):
         stmt = select(func.count(self.model.id))
         res = await self.session.execute(stmt)
@@ -73,3 +72,7 @@ class SQLAlchemyRepository(AbstractRepository):
         stmt = insert(self.model).values(**data).returning(self.model.id)
         res = await self.session.execute(stmt)
         return res.scalar_one()
+
+    async def delete_one(self, id: int) -> int:
+        stmt = delete(self.model).where(self.model.id == id)
+        await self.session.execute(stmt)

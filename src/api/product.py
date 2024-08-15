@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from starlette.status import HTTP_201_CREATED
+from starlette.status import HTTP_201_CREATED, HTTP_204_NO_CONTENT
 from typing import List
 
 from dependencies import UOWDep, UserDep
@@ -27,3 +27,9 @@ async def get_products(
 async def create_product(product: ProductSchemaAdd, uow: UOWDep, user: UserDep):
     product_id = await ProductsService().add_product(uow, product, user.id)
     return {"product_id": product_id}
+
+
+@router.delete("", status_code=HTTP_204_NO_CONTENT)
+async def delete_product(product_id: int, uow: UOWDep, user: UserDep):
+    await ProductsService().delete_product(uow, product_id)
+    return {"status": "Удалено"}

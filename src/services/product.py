@@ -13,7 +13,10 @@ class ProductsService:
             return [ProductSchemaSellerOut(**i.__dict__) for i in products]
 
     async def add_product(
-        self, uow: IUnitOfWork, product: ProductSchemaAdd, user_id: int,
+        self,
+        uow: IUnitOfWork,
+        product: ProductSchemaAdd,
+        user_id: int,
     ):
         product_dict = product.model_dump()
         product_dict["seller_id"] = user_id
@@ -21,3 +24,8 @@ class ProductsService:
             product_id = await uow.products.add_one(product_dict)
             await uow.commit()
             return product_id
+
+    async def delete_product(self, uow: IUnitOfWork, product_id: int):
+        async with uow:
+            await uow.products.delete_one(product_id)
+            await uow.commit()
